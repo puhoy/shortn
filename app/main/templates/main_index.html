@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    {{ super() }}
+    <div class="page-header, text-center">
+    <h1>shortn</h1>
+    <h5>a lnk shrtn thngy</h5>
+    </div>
+    </br>
+
+    <div class="col-md-3"></div>
+    <div class="text-center, col-md-6">
+        <div class="well well-lg">
+            <form action="{{ url_for('main.index') }}" method="post">
+                <div class="input-group">
+                    {{ form.link(placeholder='A long link', class_="form-control" ) }}
+                    <span class="input-group-btn">
+                        {{ form.submit(class_="form-control") }}
+                    </span>
+                </div>
+                {{ form.csrf_token }}
+            </form>
+        </div>
+        {% if url %}
+            </br>
+            </br>
+            <div>
+                {# shortened URL: <input type="text" class="form-control" id="result" value="{{ url_for('main.expand', code=url, _external=True) }}" autofocus/>  #}
+                <div class="well well-lg">
+                    <h5>nd here's yr shrtnd url:</h5>
+                    <input type="text" class="form-control" id="result" value="{{ url_for('main.expand', code=url, _external=True) }}" autofocus/>
+                </div>
+                <script>
+                    window.onload = document.getElementById('result').select();
+                </script>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-3"></div>
+
+{% endblock %}

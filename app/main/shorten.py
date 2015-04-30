@@ -86,9 +86,6 @@ def shorten_url(url):
 
 def lengthen_url(code):
     """Takes in one of our shortened URLs and returns the correct long url."""
-    #isolate code from shortened url
-    #if not is_valid_short(url): #url was not constructed properly
-    #    return "%s404" % url_for('main.index')
 
     id = resolve_to_id(code) #convert shortened code to id
     long = Link.query.filter_by(id=id).first()

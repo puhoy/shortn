@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% macro cut_end(long_string) %}
+    {% set max_len = 20 %}
+    {% if long_string|length > max_len %}
+        {{ long_string[:max_len] }}...
+    {% else %}
+        {{ long_string }}
+    {% endif %}
+{% endmacro %}
 
 {% block content %}
     {{ super() }}
@@ -10,26 +18,26 @@
     </br>
 
     <div class="col-md-3"></div>
-    <div class="text-center, col-md-6">
-        <div class="well well-lg">
-            <form action="{{ url_for('main.index') }}" method="post">
-                <div class="input-group">
-                    {{ form.link(placeholder='A long link', class_="form-control" ) }}
-                    <span class="input-group-btn">
-                        {{ form.submit(class_="form-control") }}
-                    </span>
-                </div>
-                {{ form.csrf_token }}
-            </form>
-        </div>
-        {% if url %}
+    <div class="col-md-6">
+            <div class="well well-lg text-center">
+                <form action="{{ url_for('main.index') }}" method="post">
+                    <div class="input-group">
+                        {{ form.link(placeholder='A long link', class_="form-control" ) }}
+                        <span class="input-group-btn">
+                            {{ form.submit(class_="form-control") }}
+                        </span>
+                    </div>
+                    {{ form.csrf_token }}
+                </form>
+            </div>
+        {% if url and long_url%}
             </br>
             </br>
-            <div>
+            <div class="text-success ">
                 {# shortened URL: <input type="text" class="form-control" id="result" value="{{ url_for('main.expand', code=url, _external=True) }}" autofocus/>  #}
-                <div class="well well-lg">
-                    <h5>here's yr shrtnd url:</h5>
-                    <input type="text" class="form-control" id="result" value="{{ url }}" autofocus/>
+                <div class="well well-lg text-left">
+                    <h4>yr shrtnd url for <a href="{{ long_url }}">{{ cut_end(long_url) }}</a>:</h4>
+                    <input type="text" class="form-control" id="result" value="{{ url }}" readonly autofocus/>
                 </div>
                 <script>
                     window.onload = document.getElementById('result').select();

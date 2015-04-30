@@ -17,7 +17,8 @@ def index():
     form = SubmitLinkForm()
     url = ''
     if form.validate_on_submit():
-        url = shorten_url(form.link.data)
+        code = shorten_url(form.link.data)
+        url = url_for('main.expand', code=code, _external=True)
     return render_template('main_index.html', form=form, url=url)
 
 @main.route('/<code>')

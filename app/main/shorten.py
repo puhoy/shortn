@@ -38,7 +38,7 @@ def resolve_to_id(code, alphabet=ALPHABET):
 
 def is_valid_short(url):
     """Takes in a url and determines if it is a valid shortened url."""
-    re_short = re.compile(url_for('main.index') + "[a-kmnp-zA-HJ-NP-Z2-9]+$") #matches our URLs
+    re_short = re.compile(url_for('main.index', _external=True) + "[a-kmnp-zA-HJ-NP-Z2-9]+$") #matches our URLs
     return not (not re_short.match(url))
 
 
@@ -46,8 +46,6 @@ def standardize_url(url):
     """Takes in a url and returns a clean, consistent format. For example:
     example.com, http://example.com, example.com/ all are http://example.com/
     Returns None if the url is somehow invalid."""
-    #if is_valid_short(url): #will not shorten one of our already shortened URLs
-    #    return None
     parts = parse.urlparse(url, "http") #default scheme is http if omitted
     if parts[0] != "http" and parts[0] != "https": #scheme was not http(s)
         return None
@@ -70,6 +68,8 @@ def standardize_url(url):
 
 def shorten_url(url):
     """Takes in a standard url and returns a shortened version."""
+    if is_valid_short(url):  # dont short our short urls
+        return url[len(url_for('main.index', _external=True)):]
     url = standardize_url(url)
     if url is None: #tried to shorten invalid url
         return None

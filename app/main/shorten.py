@@ -1,11 +1,15 @@
 __author__ = 'meatpuppet'
 
+"""
+THE WHOLE SHORTENING CODE IS BASED ON https://github.com/jessex/shrtn/blob/master/shrtn.py !!!
+"""
 
 from ..models.links import *
 
 from flask import current_app, url_for, abort
 import sys, re
 from urllib import parse
+import datetime
 
 ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 re_end = re.compile("[.][^/]+$") #for checking the end of a url
@@ -78,6 +82,8 @@ def shorten_url(url):
     link = Link.query.filter_by(url=url).first()
     if not link: #url not yet inserted into database
         link = Link(url=url)
+        link.creation_date = datetime.datetime.now()
+        link.clicks = 0
         db.session.add(link) #insert and get its id
     id = Link.query.filter_by(url=url).first().id
     code = convert_to_code(id)
@@ -91,4 +97,7 @@ def lengthen_url(code):
     long = Link.query.filter_by(id=id).first()
     if not long: #id was not found in database
         return abort(404)
+    long.clicks += 1
+    db.session.add(long)
+    # TODO wann commit?
     return long.url #url to perform 301 re-direct on

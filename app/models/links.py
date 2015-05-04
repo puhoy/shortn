@@ -12,3 +12,6 @@ class Link(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(2048))
 
+    clicks = db.Column(db.Integer)
+    creation_date = db.Column(db.DateTime)
+

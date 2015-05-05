@@ -9,6 +9,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from config import config
 
+from flask import Flask
+from flask.ext.redis import FlaskRedis
+
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -18,7 +21,8 @@ moment = Moment()
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
-login_manager.login_view = 'oauth.login'  # endpoint for login
+
+redis_store = FlaskRedis()
 
 
 def create_app(config_name, log_level=logging.INFO):
@@ -36,6 +40,8 @@ def create_app(config_name, log_level=logging.INFO):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+
+    redis_store.init_app(app)
 
     handler = RotatingFileHandler('flask.log', maxBytes=10000, backupCount=1)
     handler.setLevel(log_level)

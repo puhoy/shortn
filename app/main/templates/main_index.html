@@ -23,8 +23,11 @@
                 <form action="{{ url_for('main.index') }}" method="post">
                     <div class="input-group">
                         {{ form.link(placeholder='A long link', class_="form-control" ) }}
-                        <span class="input-group-btn">
-                            {{ form.submit(class_="form-control") }}
+                        <span class="input-group-btn"><span class="glyphicon glyphicon-scizzors" aria-hidden="true"></span>
+                           {#  {{ form.submit(class_="form-control") }} #}
+                            <button class="btn btn-default" type="submit" value="submit" _class="form-control">
+                                <span class="glyphicon glyphicon-scissors"></span>
+                            </button>
                         </span>
                     </div>
                     {{ form.csrf_token }}
@@ -44,7 +47,49 @@
                 </script>
             </div>
         {% endif %}
+        <div class="text-center">
+            </br>
+            <div class="well well-lg text-center">
+                <h5>mst clckd</h5>
+                <div id="mostclicked">
+
+                </div>
+            </div>
+            <a href="{{ url_for('main.about') }}">about</a>
+        </div>
     </div>
     <div class="col-md-3"></div>
 
 {% endblock %}
+{% block scripts %}
+    {{ super() }}
+
+    <script >
+    $(document).ready(function() {
+        $.getJSON( "{{ url_for('api.most_clicked') }}", function( data ) {
+            console.log(data)
+              var items = [];
+              $.each( data, function( key, val ) {
+                  $.each(val, function(key, val) {
+                      items.push(
+                              "<li class='list-group-item'>" +
+                              "<span class='badge'>" +
+                               val.clicks +
+                              "</span><a href='" +
+                               val.shorturl +
+                              "'>"+ val.url +"</a></li>"
+                      );
+                      console.log(val.url)
+
+                  });
+
+              });
+
+              $( "<ul/>", {
+                "class": "list-group",
+                html: items.join( "" )
+              }).appendTo( "#mostclicked" );
+        });
+    });
+    </script>
+{% endblock scripts %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    {{ super() }}
+    <div class="page-header, text-center">
+    <h1>About shortn</h1>
+    <h5>a lnk shrtn thngy</h5>
+    </div>
+    </br>
+        <div class="col-md-3"></div>
+    <div class="col-md-6">
+        take a look at the <a href="{{ url_for('main.apidoc') }}">API docs</a>
+
+    </div>
+    <div class="col-md-3"></div>
+
+
+{% endblock %}

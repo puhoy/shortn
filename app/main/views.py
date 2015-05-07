@@ -8,7 +8,7 @@ from .forms import SubmitLinkForm
 from ..shortn.shortn import shorten_url, lengthen_url, _standardize_url
 
 
-@main.route('/', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST', 'PUT'])
 def index():
     form = SubmitLinkForm()
     short_url = ''
@@ -16,7 +16,6 @@ def index():
     if form.validate_on_submit():
         short_url, long_url = shorten_url(form.link.data)
     return render_template('main_index.html', form=form, url=short_url, long_url=long_url)
-
 
 @main.route('/static/about')
 def about():
@@ -26,12 +25,14 @@ def about():
 def apidoc():
     return redirect(url_for('main.index'))
 
-@main.route('/<code>')
+@main.route('/<path:code>')
 def expand(code):
     """
 
     :param code:
     :return:
     """
-    url = lengthen_url(code)
+    if code:
+        print('called:' + code)
+        url = lengthen_url(code)
     return redirect(url, 301)

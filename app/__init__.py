@@ -9,7 +9,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from config import config
 
-from flask import Flask
+from flask import Flask, url_for
 from flask.ext.redis import FlaskRedis
 
 import logging

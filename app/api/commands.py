@@ -92,7 +92,7 @@ def most_clicked():
 
     :return:
     '''
-    urls = Url.query.order_by(Url.clicks).limit(20)
+    urls = Url.query.order_by(Url.clicks.desc()).limit(5)
     ret = []
     for url in urls:
         code = _convert_to_code(url.id)
@@ -100,7 +100,20 @@ def most_clicked():
                     'shorturl': url_for('main.expand', code=code, _external=True),
                     'clicks': url.clicks,
                     'creation_date': url.creation_date})
-    ret.reverse()
+    #ret.reverse()
     return jsonify(items=ret)
+
+@api.route('/api/latest')
+def latest():
+    urls = Url.query.order_by(Url.creation_date.desc()).limit(5)
+    ret = []
+    for url in urls:
+        code = _convert_to_code(url.id)
+        ret.append({'url': url.url,
+                    'shorturl': url_for('main.expand', code=code, _external=True),
+                    'clicks': url.clicks,
+                    'creation_date': url.creation_date})
+    return jsonify(items=ret)
+
 
 

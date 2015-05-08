@@ -8,6 +8,7 @@ from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from config import config
+from flask.ext.markdown import Markdown
 
 from flask import Flask, url_for
 from flask.ext.redis import FlaskRedis
@@ -40,6 +41,8 @@ def create_app(config_name, log_level=logging.INFO):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+
+    Markdown(app)
 
     redis_store.init_app(app)
 

@@ -37,6 +37,7 @@ def about():
 
     :return:
     """
+
     return render_template('main_about.html')
 
 @main.route('/static/apidoc')

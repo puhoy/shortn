@@ -22,15 +22,26 @@
 
 {% block content %}
 
-        <div class = "container">
-            {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-            <button type="button" class="close"
-                    data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-            {% endfor %}
-            {% block page_content %}{% endblock %}
+    <div class = "container">
+        <div class="page-header, text-center">
+            <a href="{{ url_for('main.index') }}"><h1>shortn</h1></a>
+            <h5>a lnk shrtn thngy</h5>
         </div>
+        </br>
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close"
+                            data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% block page_content %}
+                {# page content goes here #}
+            {% endblock %}
 
+        </div>
+        <div class="col-md-3"></div>
+    </div>
 {% endblock %}

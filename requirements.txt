@@ -2,6 +2,7 @@ Flask==0.10.1
 Flask-Bootstrap==3.3.2.1
 Flask-Login==0.2.11
 Flask-Mail==0.9.1
+Flask-Markdown==0.3
 Flask-Migrate==1.4.0
 Flask-Moment==0.4.0
 Flask-Redis==0.1.0
@@ -10,6 +11,7 @@ Flask-Script==2.0.5
 Flask-WTF==0.11
 Jinja2==2.7.3
 Mako==1.0.1
+Markdown==2.6.2
 MarkupSafe==0.23
 SQLAlchemy==1.0.2
 WTForms==2.0.2

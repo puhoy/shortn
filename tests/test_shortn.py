@@ -82,10 +82,14 @@ class BasicsTestCase(unittest.TestCase):
         code, long_url = shorten_url('hupen')
         self.assertEqual(code, None)
 
+        #an valid shortened link should return its code again
+        code, long_url = shorten_url(url_for('main.index', _external=True)+ALPHABET[1])
+        self.assertEqual(code, ALPHABET[1])
+
     def test_lengthen_url(self):
         code, long_url = shorten_url('hupen.de')
         self.assertEqual(long_url, lengthen_url(code))
-        self.assertEqual(False, lengthen_url('NOCODE'))
+        self.assertEqual(False, lengthen_url('NOTYET'))
         self.assertEqual(False, lengthen_url('##'))  # not in alphabet
 
 

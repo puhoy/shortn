@@ -7,7 +7,7 @@ import re
 from urllib import parse
 import urltools
 
-ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
+ALPHABET = "abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 # djangos url validator
 url_regex = re.compile(
@@ -47,7 +47,7 @@ def _resolve_to_id(code, alphabet=ALPHABET):
 
 def _is_valid_short(url):
     """Takes in a url and determines if it is a valid shortened url."""
-    re_short = re.compile(url_for('main.index', _external=True) + "[a-kmnp-zA-HJ-NP-Z0-9]+$") #matches our URLs
+    re_short = re.compile(url_for('main.index', _external=True) + "[a-zA-Z0-9]+$") #matches our URLs
     return not (not re_short.match(url))
 
 
@@ -56,8 +56,8 @@ def _standardize_url(url):
     example.com, http://example.com, example.com/ all are http://example.com/
     Returns None if the url is somehow invalid."""
     parts = parse.urlparse(url, "http") #default scheme is http if omitted
-    if parts[0] != "http" and parts[0] != "https": #scheme was not http(s)
-        return None
+    #if parts[0] != "http" and parts[0] != "https": #scheme was not http(s)
+    #    return None
     standard = parts.geturl()
     standard = urltools.normalize(standard)
     return standard
@@ -75,10 +75,13 @@ def shorten_url(url):
     :return: shortened code, normalized url
     """
     if _is_valid_short(url):  # dont short our short urls
-        return url[len(url_for('main.index', _external=True)):]
+        long_url = lengthen_url(url[len(url_for('main.index', _external=True)):])
+        if long_url:
+            code = url[len(url_for('main.index', _external=True)):]
+            return code, long_url
+        else:
+            return None, None
     url = _standardize_url(url)
-    if url is None: #tried to shorten invalid url
-        return None, None
     if not url_regex.match(url):
         return None, None
 
@@ -94,7 +97,12 @@ def shorten_url(url):
 
 
 def lengthen_url(code):
-    """Takes in one of our shortened URLs and returns the correct long url."""
+    """
+    Takes in one of our short-codes and returns the correct long url.
+
+    :param code:
+    :return:
+    """
     id = _resolve_to_id(code) #convert shortened code to id
     if id:
         long = Url.query.filter_by(id=id).first()

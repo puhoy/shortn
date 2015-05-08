@@ -2,12 +2,13 @@ import os
 from app import create_app, db
 from flask.ext.script import Manager, Shell, Server
 from flask.ext.migrate import Migrate, MigrateCommand
-from flask import current_app
+from flask import current_app, url_for
 
 
 
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+
 manager = Manager(app)
 migrate = Migrate(app, db)
 

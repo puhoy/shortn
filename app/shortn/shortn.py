@@ -1,13 +1,15 @@
 __author__ = 'meatpuppet'
 
 """
-THE WHOLE SHORTENING CODE IS BASED ON https://github.com/jessex/shrtn/blob/master/shrtn.py !!!
+THE WHOLE SHORTENING CODE
+(which means the functions _convert_to_code, _resolve_to_id, _is_valid_short)
+IS BASED ON https://github.com/jessex/shrtn/blob/master/shrtn.py !!!
 """
 
 from ..models.Url import *
 
-from flask import current_app, url_for, abort
-import sys, re
+from flask import url_for
+import re
 from urllib import parse
 
 
@@ -61,8 +63,17 @@ def _standardize_url(url):
     return standard
 
 
-def shorten_url(url):
-    """Takes in a standard url and returns a shortened version."""
+def shorten_url(url):  # TODO search all uses!!
+    """
+    takes a url as argument and returns the short code (based on the db-row) and the normalized(!) long url
+    if the url is already in the db, the old code is returned. if not, a new entry will be added (with timestamp,
+    zero clicks and so on... see models/Url.py for more information)
+
+    returns none if the url was invalid.
+
+    :param url: a long url
+    :return: shortened code, normalized url
+    """
     if _is_valid_short(url):  # dont short our short urls
         return url[len(url_for('main.index', _external=True)):]
     url = _standardize_url(url)
@@ -77,7 +88,7 @@ def shorten_url(url):
         db.session.commit()
     id = Url.query.filter_by(url=url).first().id
     code = _convert_to_code(id)
-    return url_for('main.expand', code=code, _external=True), url
+    return code, url
 
 
 def lengthen_url(code):
@@ -85,8 +96,7 @@ def lengthen_url(code):
     id = _resolve_to_id(code) #convert shortened code to id
     long = Url.query.filter_by(id=id).first()
     if not long: #id was not found in database
-        return abort(404)  # TODO flash a message
+        return None
     long.clicks += 1
     db.session.add(long)
-    # TODO wann commit?
     return long.url #url to perform 301 re-direct on

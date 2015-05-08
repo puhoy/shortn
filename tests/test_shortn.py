@@ -41,6 +41,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertTrue(_convert_to_code(5, alphabet='ab') == 'bab')
         self.assertTrue(_convert_to_code(6, alphabet='ab') == 'bba')
         self.assertTrue(_convert_to_code(7, alphabet='ab') == 'bbb')
+
         self.assertTrue(_convert_to_code(0, alphabet='01') == '0')
         self.assertTrue(_convert_to_code(1, alphabet='01') == '1')
         self.assertTrue(_convert_to_code(2, alphabet='01') == '10')

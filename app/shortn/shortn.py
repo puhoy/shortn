@@ -1,10 +1,5 @@
 __author__ = 'meatpuppet'
 
-"""
-THE WHOLE SHORTENING CODE
-(which means the functions _convert_to_code, _resolve_to_id, _is_valid_short)
-IS BASED ON https://github.com/jessex/shrtn/blob/master/shrtn.py !!!
-"""
 
 from ..models.Url import *
 
@@ -41,6 +36,7 @@ def _convert_to_code(num, alphabet=ALPHABET):
 
 
 def _resolve_to_id(code, alphabet=ALPHABET):
+    '''https://github.com/jessex/shrtn/blob/master/shrtn.py'''
     """Converts the shortened URL code back to an id number in decimal form. Use
     the id to query the database and lookup the long URL."""
     base = len(alphabet)

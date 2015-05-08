@@ -7,10 +7,5 @@ when its more or less done, i will release the code on [github](https://github.c
 ...there is an <a href="{{ url_for('main.apidoc') }}">API</a>!
 
 
-#### credits
-
-a part of the mechanic (that means the part that converts the database id to code (and backwards)) is stolen from [github.com/jessex/shrtn/](https://github.com/jessex/shrtn/), so... thank you, jessex
-
-
 #### contact
 [email](mailto:jan@kwoh.de) // [xmpp](xmpp:jan@kwoh.de)

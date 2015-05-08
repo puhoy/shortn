@@ -18,6 +18,9 @@ def index():
     form = SubmitLinkForm()
     if form.validate_on_submit():
         code, long_url = shorten_url(form.link.data)
+        if not code:
+            flash('something went wrong...')
+            return redirect(url_for('main.index'))
         form.link.data = ''
         return render_template('main_index.html',
                                form=form,

@@ -17,7 +17,8 @@ import urltools
 
 ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
 #re_end = re.compile("[.][^/]+$") #for checking the end of a url
-MAX_URLS = 10000
+url_regex = re.compile('https?://(?:www)?(?:[\w-]{2,255}(?:\.\w{2,6}){1,2})(?:/[\w&%?#-]{1,300})?')
+# TODO set MAX_URLs somehow
 
 
 def _convert_to_code(id, alphabet=ALPHABET):
@@ -42,7 +43,7 @@ def _resolve_to_id(code, alphabet=ALPHABET):
     id = 0
     for i in range(0, size): #convert from higher base back to decimal
         id += alphabet.index(code[i]) * (base ** (size-i-1))
-    return id % MAX_URLS
+    return id
 
 
 def _is_valid_short(url):
@@ -63,7 +64,7 @@ def _standardize_url(url):
     return standard
 
 
-def shorten_url(url):  # TODO search all uses!!
+def shorten_url(url):
     """
     takes a url as argument and returns the short code (based on the db-row) and the normalized(!) long url
     if the url is already in the db, the old code is returned. if not, a new entry will be added (with timestamp,
@@ -78,7 +79,9 @@ def shorten_url(url):  # TODO search all uses!!
         return url[len(url_for('main.index', _external=True)):]
     url = _standardize_url(url)
     if url is None: #tried to shorten invalid url
-        return None
+        return None, None
+    if not url_regex.match(url):
+        return None, None
 
     #get the id for this url (whether new or otherwise)
     link = Url.query.filter_by(url=url).first()

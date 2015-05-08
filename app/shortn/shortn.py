@@ -1,18 +1,13 @@
 __author__ = 'meatpuppet'
 
-
-from ..models.Url import *
+from ..models.Url import Url, db
 
 from flask import url_for
 import re
 from urllib import parse
-
-
 import urltools
 
 ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
-#re_end = re.compile("[.][^/]+$") #for checking the end of a url
-#url_regex = re.compile('https?://(?:www)?(?:[\w-]{2,255}(?:\.\w{2,6}){1,2})(?:/[\w&%?#-]{1,300})?')
 
 # djangos url validator
 url_regex = re.compile(
@@ -104,7 +99,7 @@ def lengthen_url(code):
     if id:
         long = Url.query.filter_by(id=id).first()
         if not long: #id was not found in database
-            return None
+            return False
         long.clicks += 1
         db.session.add(long)
         return long.url #url to perform 301 re-direct on

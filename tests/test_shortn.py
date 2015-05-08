@@ -2,10 +2,16 @@ __author__ = 'meatpuppet'
 
 
 import unittest
+import app
 from app import create_app, db
 from flask import current_app, url_for
 
-from app.shortn.shortn import _standardize_url, _convert_to_code, _resolve_to_id, ALPHABET, _is_valid_short
+from app.shortn.shortn import _standardize_url, \
+    _convert_to_code, \
+    _resolve_to_id, \
+    ALPHABET, \
+    _is_valid_short, \
+    lengthen_url, shorten_url
 
 class BasicsTestCase(unittest.TestCase):
     def setUp(self):
@@ -60,4 +66,27 @@ class BasicsTestCase(unittest.TestCase):
             #print('')
             #print(given + "->" + _standardize_url(given))
             self.assertTrue(standardized == _standardize_url(given))
+
+    def test_shorten_url(self):
+        db.session.remove()
+        #should gibe the first char in alphanet
+        code, long_url = shorten_url('hupen.de')
+        self.assertEqual(code, ALPHABET[1], msg=code)
+        self.assertTrue(code == ALPHABET[1])
+
+        #should return the same if the link is already shortened
+        code, long_url = shorten_url('hupen.de')
+        self.assertTrue(code == ALPHABET[1])
+
+        #no valid url
+        code, long_url = shorten_url('hupen')
+        self.assertEqual(code, None)
+
+    def test_lengthen_url(self):
+        code, long_url = shorten_url('hupen.de')
+        self.assertEqual(long_url, lengthen_url(code))
+        self.assertEqual(False, lengthen_url('NOCODE'))
+        self.assertEqual(False, lengthen_url('##'))  # not in alphabet
+
+
 

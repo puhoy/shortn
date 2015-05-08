@@ -17,22 +17,27 @@ import urltools
 
 ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
 #re_end = re.compile("[.][^/]+$") #for checking the end of a url
-url_regex = re.compile('https?://(?:www)?(?:[\w-]{2,255}(?:\.\w{2,6}){1,2})(?:/[\w&%?#-]{1,300})?')
+#url_regex = re.compile('https?://(?:www)?(?:[\w-]{2,255}(?:\.\w{2,6}){1,2})(?:/[\w&%?#-]{1,300})?')
+
+# djangos url validator
+url_regex = re.compile(
+    r'^(?:http|ftp)s?://' # http:// or https://
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' # domain...
+    r'localhost|' # localhost...
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|' # ...or ipv4
+    r'\[?[A-F0-9]*:[A-F0-9:]+\]?)' # ...or ipv6
+    r'(?::\d+)?' # optional port
+    r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
 # TODO set MAX_URLs somehow
 
 
-def _convert_to_code(id, alphabet=ALPHABET):
-    """Converts a decimal id number into a shortened URL code. Use the id of the
-    row in the database with the entered long URL."""
-    if id <= 0: #invalid codes (autoincrement is always 1 or higher)
-        return alphabet[0]
-    base = len(alphabet) #base to convert to (56 for our standard alphabet)
-    chars = []
-    while id:
-        chars.append(alphabet[id % base])
-        id //= base
-    chars.reverse() #moved right to left, so reverse order
-    return ''.join(chars) #convert stored characters to single string
+def _convert_to_code(num, alphabet=ALPHABET):
+    """
+    stolen from  http://code.activestate.com/recipes/65212/
+    """
+    b = len(alphabet)
+    return ((num == 0) and alphabet[0] ) or ( _convert_to_code(num // b, alphabet).lstrip(alphabet[0]) + alphabet[num % b])
 
 
 def _resolve_to_id(code, alphabet=ALPHABET):
@@ -41,14 +46,17 @@ def _resolve_to_id(code, alphabet=ALPHABET):
     base = len(alphabet)
     size = len(code)
     id = 0
-    for i in range(0, size): #convert from higher base back to decimal
-        id += alphabet.index(code[i]) * (base ** (size-i-1))
+    try:
+        for i in range(0, size): #convert from higher base back to decimal
+            id += alphabet.index(code[i]) * (base ** (size-i-1))
+    except(ValueError):
+        return False
     return id
 
 
 def _is_valid_short(url):
     """Takes in a url and determines if it is a valid shortened url."""
-    re_short = re.compile(url_for('main.index', _external=True) + "[a-kmnp-zA-HJ-NP-Z2-9]+$") #matches our URLs
+    re_short = re.compile(url_for('main.index', _external=True) + "[a-kmnp-zA-HJ-NP-Z0-9]+$") #matches our URLs
     return not (not re_short.match(url))
 
 
@@ -97,9 +105,11 @@ def shorten_url(url):
 def lengthen_url(code):
     """Takes in one of our shortened URLs and returns the correct long url."""
     id = _resolve_to_id(code) #convert shortened code to id
-    long = Url.query.filter_by(id=id).first()
-    if not long: #id was not found in database
-        return None
-    long.clicks += 1
-    db.session.add(long)
-    return long.url #url to perform 301 re-direct on
+    if id:
+        long = Url.query.filter_by(id=id).first()
+        if not long: #id was not found in database
+            return None
+        long.clicks += 1
+        db.session.add(long)
+        return long.url #url to perform 301 re-direct on
+    return False

@@ -48,6 +48,12 @@
                 <div>Loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></div>
             </div>
         </div>
+        <div class="well well-lg text-center">
+            <h5>latest</h5>
+            <div id="latest">
+                <div>Loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></div>
+            </div>
+        </div>
         <a href="{{ url_for('main.about') }}">about</a>
     </div>
 
@@ -78,6 +84,30 @@
                     "class": "list-group",
                     html: items.join( "" )
                 }).appendTo( "#mostclicked" );
+            });
+        });
+
+    $(document).ready(function() {
+            $.getJSON( "{{ url_for('api.latest') }}", function( data ) {
+                console.log(data)
+                var items = [];
+                $.each( data, function( key, val ) {
+                    $.each(val, function(key, val) {
+                        items.push(
+                                "<li class='list-group-item'>" +
+                                "<span class='badge'>" +
+                                val.clicks +
+                                "</span><a href='" +
+                                val.shorturl +
+                                "'>"+ val.url +"</a></li>"
+                        );
+                    });
+                });
+                $( "#latest").empty();
+                $( "<ul/>", {
+                    "class": "list-group",
+                    html: items.join( "" )
+                }).appendTo( "#latest" );
             });
         });
     </script>

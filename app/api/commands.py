@@ -100,7 +100,6 @@ def most_clicked():
                     'shorturl': url_for('main.expand', code=code, _external=True),
                     'clicks': url.clicks,
                     'creation_date': url.creation_date})
-    #ret.reverse()
     return jsonify(items=ret)
 
 @api.route('/api/latest')
@@ -114,7 +113,6 @@ def latest():
                     'shorturl': url_for('main.expand', code=code, _external=True),
                     'clicks': url.clicks,
                     'creation_date': humanize.naturaldelta(creation_date)})
-        print(humanize.naturaldelta(creation_date))
     return jsonify(items=ret)
 
 

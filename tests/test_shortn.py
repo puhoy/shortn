@@ -54,18 +54,26 @@ class BasicsTestCase(unittest.TestCase):
 
     def test__is_valid_short(self):
         short = url_for('main.index', _external=True)
-        self.assertTrue(_is_valid_short(short+'a') == True)
-        self.assertTrue(_is_valid_short(short+'aaa') == True)
+        self.assertTrue(_is_valid_short(short+'a'))
+        self.assertTrue(_is_valid_short(short+'aaa'))
         self.assertTrue(_is_valid_short(short+'#') == False)
+        self.assertFalse(_is_valid_short('http://sadasda.de/a'))
 
     def test__standardize_url(self):
-        urls = {'google': 'http://google/',
-                'https://abc.de': 'https://abc.de/',
-                '': 'http:///'}
+        urls = {'https://abc.de': 'https://abc.de/',
+                'abc.de': 'http://abc.de/'}
+        no_urls = ['/google/',
+                   'http://abc.de/<br>',
+                   'http://abc.de/</br>',
+                   '',
+                   'abc/',
+                   'abc:2323']
         for given, standardized in urls.items():
             #print('')
             #print(given + "->" + _standardize_url(given))
-            self.assertTrue(standardized == _standardize_url(given))
+            self.assertEqual(standardized, _standardize_url(given))
+        for url in no_urls:
+            self.assertEqual(_standardize_url(url), None)
 
     def test_shorten_url(self):
         db.session.remove()
@@ -77,6 +85,10 @@ class BasicsTestCase(unittest.TestCase):
         #should return the same if the link is already shortened
         code, long_url = shorten_url('hupen.de')
         self.assertTrue(code == ALPHABET[1])
+
+        #next row
+        code, long_url = shorten_url('hupen.de/a')
+        self.assertTrue(code == ALPHABET[2])
 
         #no valid url
         code, long_url = shorten_url('hupen')

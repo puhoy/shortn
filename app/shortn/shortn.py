@@ -10,14 +10,16 @@ import urltools
 ALPHABET = "abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 # djangos url validator
-url_regex = re.compile(
+'''url_regex = re.compile(
     r'^(?:http|ftp)s?://' # http:// or https://
     r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' # domain...
     r'localhost|' # localhost...
     r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|' # ...or ipv4
     r'\[?[A-F0-9]*:[A-F0-9:]+\]?)' # ...or ipv6
     r'(?::\d+)?' # optional port
-    r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    r'(?:/?|[/?]\S+)$', re.IGNORECASE)'''
+
+url_regex = re.compile('^(http(?:s)?\:\/\/[a-zA-Z0-9]+(?:(?:\.|\-)[a-zA-Z0-9]+)+(?:\:\d+)?(?:\/[\w\-]+)*(?:\/?|\/\w+\.[a-zA-Z]{2,4}(?:\?[\w]+\=[\w\-]+)?)?(?:\&[\w]+\=[\w\-]+)*)$')
 
 # TODO set MAX_URLs somehow
 
@@ -60,6 +62,8 @@ def _standardize_url(url):
     #    return None
     standard = parts.geturl()
     standard = urltools.normalize(standard)
+    if not url_regex.match(standard):
+        return None
     return standard
 
 
@@ -82,7 +86,7 @@ def shorten_url(url):
         else:
             return None, None
     url = _standardize_url(url)
-    if not url_regex.match(url):
+    if not url:
         return None, None
 
     #get the id for this url (whether new or otherwise)

@@ -6,8 +6,8 @@ from flask import jsonify, url_for, request
 from ..shortn.shortn import lengthen_url, shorten_url, _convert_to_code
 
 from ..models.Url import Url
-
-
+import datetime
+import humanize
 
 """
 the routes will work if we have the # in the expand function (see main.views)
@@ -109,10 +109,12 @@ def latest():
     ret = []
     for url in urls:
         code = _convert_to_code(url.id)
+        creation_date = (datetime.datetime.now() - url.creation_date).total_seconds()
         ret.append({'url': url.url,
                     'shorturl': url_for('main.expand', code=code, _external=True),
                     'clicks': url.clicks,
-                    'creation_date': url.creation_date})
+                    'creation_date': humanize.naturaldelta(creation_date)})
+        print(humanize.naturaldelta(creation_date))
     return jsonify(items=ret)
 
 

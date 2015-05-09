@@ -96,11 +96,12 @@
                         items.push(
                                 "<li class='list-group-item'>" +
                                 "<span class='badge'>" +
-                                val.clicks +
+                                ''+ val.creation_date + ' ago' +
                                 "</span><a href='" +
                                 val.shorturl +
                                 "'>"+ val.url +"</a></li>"
                         );
+
                     });
                 });
                 $( "#latest").empty();

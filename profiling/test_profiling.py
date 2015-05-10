@@ -39,3 +39,18 @@ def profile_lengthen(output_file='profile_lengthen.png'):
         url = url_for('main.index')
         for i in range(0, cnt):
             lengthen_url(url+str(_convert_to_code(i)))
+
+
+def profile_api_shorten(output_file='profile_shorten.png'):
+    with PyCallGraph(output=GraphvizOutput(output_file=output_file)):
+        cnt = 50
+        for i in range(0, cnt):
+            shorten_url('http://abc.de/'+str(i))
+
+
+def profile_api_lengthen(output_file='profile_lengthen.png'):
+    with PyCallGraph(output=GraphvizOutput(output_file=output_file)):
+        cnt = 10000
+        url = url_for('main.index')
+        for i in range(0, cnt):
+            lengthen_url(url+str(_convert_to_code(i)))

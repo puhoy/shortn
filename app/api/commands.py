@@ -48,11 +48,11 @@ def shorten():
                     's_url': url_for('main.expand', code=code, _external=True),
                     })
 
-
-@api.route('/api/expand/<string:code>', methods=['GET'])
-def expand(code):
+@api.route('/api/expand/', methods=['GET'])
+@api.route('/api/expand/<code>', methods=['GET'])
+def expand(code=None):
     """
-    GET something like api/expand/CODE
+    GET something by calling api/expand/CODE
 
     :param code: the short code
     :return:
@@ -63,8 +63,10 @@ def expand(code):
     """
     if code:
         url = lengthen_url(code)
-        return jsonify({'status': 'ok',
-                        'url': url})
+        if url:
+            return jsonify({'status': 'ok',
+                            'url': url})
+
     return jsonify({'status': 'err'})
 
 

@@ -26,13 +26,13 @@ class BasicsTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def _test_profile_shorten(self, output_file='profile_shorten.png'):
+    def test_profile_shorten(self, output_file='profile_shorten.png'):
         with PyCallGraph(output=GraphvizOutput(output_file=output_file)):
             cnt = 50
             for i in range(0, cnt):
                 shorten_url('http://abc.de/'+str(i))
 
-    def _test_profile_lengthen(self, output_file='profile_lengthen.png'):
+    def test_profile_lengthen(self, output_file='profile_lengthen.png'):
         with PyCallGraph(output=GraphvizOutput(output_file=output_file)):
             cnt = 100
             url = url_for('main.index')

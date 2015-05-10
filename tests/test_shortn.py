@@ -61,7 +61,10 @@ class BasicsTestCase(unittest.TestCase):
 
     def test__standardize_url(self):
         urls = {'https://abc.de': 'https://abc.de/',
-                'abc.de': 'http://abc.de/'}
+                'abc.de': 'http://abc.de/',
+                'abc.de/ABc': 'http://abc.de/ABc',
+                'ftp://abc.de/': 'ftp://abc.de/',
+                'sftp://asdfasdf.de/AAA': 'sftp://asdfasdf.de/AAA'}
         no_urls = ['/google/',
                    'http://abc.de/<br>',
                    'http://abc.de/</br>',

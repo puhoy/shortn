@@ -2,7 +2,9 @@ __author__ = 'meatpuppet'
 
 from ..models.Url import Url, db
 
-from flask import url_for
+import app
+
+from flask import url_for, current_app
 import re
 from urllib import parse
 import urltools
@@ -19,8 +21,12 @@ ALPHABET = "abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     r'(?::\d+)?' # optional port
     r'(?:/?|[/?]\S+)$', re.IGNORECASE)'''
 
-url_regex = re.compile('^(http(?:s)?\:\/\/[a-zA-Z0-9]+(?:(?:\.|\-)[a-zA-Z0-9]+)+(?:\:\d+)?(?:\/[\w\-]+)*(?:\/?|\/\w+\.[a-zA-Z]{2,4}(?:\?[\w]+\=[\w\-]+)?)?(?:\&[\w]+\=[\w\-]+)*)$')
 
+#url_regex = re.compile('^(http(?:s)?\:\/\/[a-zA-Z0-9]+(?:(?:\.|\-)[a-zA-Z0-9]+)+(?:\:\d+)?(?:\/[\w\-]+)*(?:\/?|\/\w+\.[a-zA-Z]{2,4}(?:\?[\w]+\=[\w\-]+)?)?(?:\&[\w]+\=[\w\-]+)*)$')
+#this should match valid urls, but protocol-agnostic
+url_regex = re.compile('^([a-z]+\:\/\/[a-zA-Z0-9]+(?:(?:\.|\-)[a-zA-Z0-9]+)+(?:\:\d+)?(?:\/[\w\-]+)*(?:\/?|\/\w+\.[a-zA-Z]{2,4}(?:\?[\w]+\=[\w\-]+)?)?(?:\&[\w]+\=[\w\-]+)*)$')
+
+our_short_url_regex = None
 # TODO set MAX_URLs somehow
 
 
@@ -48,9 +54,17 @@ def _resolve_to_id(code, alphabet=ALPHABET):
 
 
 def _is_valid_short(url):
-    """Takes in a url and determines if it is a valid shortened url."""
-    re_short = re.compile(url_for('main.index', _external=True) + "[a-zA-Z0-9]+$") #matches our URLs
-    return not (not re_short.match(url))
+    """
+    this checks if a given url is one of our shortened urls
+    on the first call this will create a regex which will be used in later calls.
+
+    :param url:
+    :return: True, if url is one of our valid short urls
+    """
+    global our_short_url_regex
+    if not our_short_url_regex:
+        our_short_url_regex = re.compile(url_for('main.index', _external=True) + "[a-zA-Z0-9]+$") #matches our URLs
+    return not (not our_short_url_regex.match(url))
 
 
 def _standardize_url(url):
@@ -58,8 +72,6 @@ def _standardize_url(url):
     example.com, http://example.com, example.com/ all are http://example.com/
     Returns None if the url is somehow invalid."""
     parts = parse.urlparse(url, "http") #default scheme is http if omitted
-    #if parts[0] != "http" and parts[0] != "https": #scheme was not http(s)
-    #    return None
     standard = parts.geturl()
     standard = urltools.normalize(standard)
     if not url_regex.match(standard):
@@ -79,9 +91,9 @@ def shorten_url(url):
     :return: shortened code, normalized url
     """
     if _is_valid_short(url):  # dont short our short urls
-        long_url = lengthen_url(url[len(url_for('main.index', _external=True)):])
+        code = url[len(url_for('main.index', _external=True)):]
+        long_url = lengthen_url(code)
         if long_url:
-            code = url[len(url_for('main.index', _external=True)):]
             return code, long_url
         else:
             return None, None
@@ -95,8 +107,7 @@ def shorten_url(url):
         link = Url(url=url)
         db.session.add(link) #insert and get its id
         db.session.commit()
-    id = Url.query.filter_by(url=url).first().id
-    code = _convert_to_code(id)
+    code = _convert_to_code(link.id)
     return code, url
 
 

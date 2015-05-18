@@ -64,13 +64,14 @@ class BasicsTestCase(unittest.TestCase):
                 'abc.de': 'http://abc.de/',
                 'abc.de/ABc': 'http://abc.de/ABc',
                 'ftp://abc.de/': 'ftp://abc.de/',
-                'sftp://asdfasdf.de/AAA': 'sftp://asdfasdf.de/AAA'}
+                'http://abc.de/<br>': 'http://abc.de/<br>',
+                'http://abc.de/</br>': 'http://abc.de/</br>',
+                'sftp://asdfasdf.de/AAA': 'sftp://asdfasdf.de/AAA',
+                'abc:2323': 'http://abc:2323/'}
         no_urls = ['/google/',
-                   'http://abc.de/<br>',
-                   'http://abc.de/</br>',
                    '',
                    'abc/',
-                   'abc:2323']
+                   ]
         for given, standardized in urls.items():
             #print('')
             #print(given + "->" + _standardize_url(given))

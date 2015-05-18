@@ -32,7 +32,7 @@
         <div class="text-success ">
             {# shortened URL: <input type="text" class="form-control" id="result" value="{{ url_for('main.expand', code=url, _external=True) }}" autofocus/>  #}
             <div class="well well-lg text-left">
-                <h4>yr shrtnd url for <a href="{{ long_url }}">{{ cut_end(long_url) }}</a>:</h4>
+                <h4>yr shrtnd url for <a href="{{ long_url }}">{{ cut_end(long_url)|e }}</a>:</h4>
                 <input type="text" class="form-control" id="result" value="{{ url }}" readonly autofocus/>
             </div>
             <script>
@@ -75,7 +75,7 @@
                                 val.clicks +
                                 "</span><a href='" +
                                 val.shorturl +
-                                "'>"+ val.url +"</a></li>"
+                                "'>"+ htmlEscape(val.url) +"</a></li>"
                         );
                     });
                 });
@@ -99,7 +99,7 @@
                                 ''+ val.creation_date + ' ago' +
                                 "</span><a href='" +
                                 val.shorturl +
-                                "'>"+ val.url +"</a></li>"
+                                "'>"+ htmlEscape(val.url) +"</a></li>"
                         );
 
                     });
@@ -111,5 +111,15 @@
                 }).appendTo( "#latest" );
             });
         });
+
+        {# http://stackoverflow.com/questions/1219860/html-encoding-in-javascript-jquery #}
+        function htmlEscape(str) {
+        return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
     </script>
 {% endblock scripts %}

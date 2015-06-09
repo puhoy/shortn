@@ -66,6 +66,7 @@ class BasicsTestCase(unittest.TestCase):
                 'ftp://abc.de/': 'ftp://abc.de/',
                 'http://abc.de/<br>': 'http://abc.de/<br>',
                 'http://abc.de/</br>': 'http://abc.de/</br>',
+                'http://abc.de/##': 'http://abc.de/##',
                 'sftp://asdfasdf.de/AAA': 'sftp://asdfasdf.de/AAA',
                 'abc:2323': 'http://abc:2323/'}
         no_urls = ['/google/',

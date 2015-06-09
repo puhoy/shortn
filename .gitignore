@@ -11,6 +11,7 @@ venv/*
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
 
+migrations/*
 
 ### C++ template
 # Compiled Object files

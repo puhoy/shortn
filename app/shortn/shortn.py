@@ -9,7 +9,7 @@ import re
 from urllib import parse
 import urltools
 
-ALPHABET = "abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+ALPHABET = "abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~"
 
 # djangos url validator
 url_regex = re.compile(
